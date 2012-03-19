@@ -1,0 +1,121 @@
+@CHARSET "utf-8";
+
+body {
+  font: normal 11pt arial,sans-serif;
+  line-height: 1.2em;
+}
+
+#main {
+}
+
+#tasklists {
+  float: left;
+  width: 200px;
+}
+
+#tasks {
+  float: left;
+}
+
+.cf:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.cf {
+  zoom: 1;
+}
+
+#tasklists ul {
+  margin: 0;
+}
+
+#tasklists ul li {
+  border-style: solid;
+  border-color: #8080ff;
+  border-top-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width: 0px;
+  padding: 5px;
+  margin: 0;
+  list-style-type: none;
+  cursor: pointer;
+}
+
+#tasklists ul li:last-of-type {
+  border-bottom-width: 1px;
+}
+
+#tasklists ul li:hover {
+  background-color: #eeeeff;
+}
+
+.selected {
+  background-color: #eeeeff;
+}
+
+.dueInput {
+  display: none;
+}
+
+.update {
+  display: none;
+}
+
+#tasks {
+  border: solid #8080ff 1px;
+}
+
+#tasks ul {
+  padding: 0 0 0 16px;
+  margin: 0;
+}
+
+#tasks ul li {
+  padding 5px 5px 5px 1em;
+  margin 0;
+  list-style-type: none;
+}
+
+
+.option {
+  margin: 2px 0 0 8px;
+  font-size: 8pt;
+  color: #666666;
+  background-color: #eeeeff;
+  border-radius: 5px;
+  padding: 3px 8px 3px 8px;
+  width: 22em;
+}
+
+.edit {
+  float: right;
+  top: 0;
+  right: 0;
+  height: 16px;
+  width: 16px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+dt {
+}
+
+dd {
+  font-size: 8pt;
+  color: #666666;
+  margin-bottom: 4px;
+  background-color: #e0e0ff;
+  border-radius: 5px;
+  padidng: 8px;
+  width: 20em
+}
+
+input {
+  font-size: 8pt;
+}
+
