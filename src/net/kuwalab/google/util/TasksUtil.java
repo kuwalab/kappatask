@@ -1,8 +1,6 @@
 package net.kuwalab.google.util;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -98,13 +96,9 @@ public class TasksUtil {
         c.getOutputStream().write(payload);
         c.getOutputStream().flush();
 
-        // トークン類が入ったレスポンスボディの内容を返す(JSONで返される)
-        BufferedReader reader =
-            new BufferedReader(new InputStreamReader(c.getInputStream()));
-        AuthToken authToken = JSON.decode(reader, AuthToken.class);
-        reader.close();
-
-        return authToken;
+        return JSON.decode(
+            InputStreamUtil.readAndClose(c.getInputStream()),
+            AuthToken.class);
     }
 
     /**

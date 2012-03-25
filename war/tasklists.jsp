@@ -35,12 +35,16 @@
 	
 	TasklistsModel = (function() {
 		var Constr = function(tasklists) {
-			$(tasklists).bind('click', this.onClickTasklists);
+			$(tasklists).bind('click', {tasklists: $(tasklists)}, this.onClickTasklists);
 		};
 	
 		Constr.prototype = {
-			onClickTasklists: function() {
+			onClickTasklists: function(event) {
 				var tasklist = $(this).find('[name="tasklist"]').val();
+				$('#tasksMain').html('<img src="image/wait.gif">')
+				event.data.tasklists.removeAttr('class');
+				$(this).attr('class', 'selected');
+				
 				$.ajax({
 					type: 'GET',
 					url: 'tasks',
