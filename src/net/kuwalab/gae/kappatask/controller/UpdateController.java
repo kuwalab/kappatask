@@ -20,11 +20,6 @@ public class UpdateController extends Controller {
         String taskId = asString("task");
         String due = asString("due");
 
-        System.out.println(access_token);
-        System.out.println(tasklist);
-        System.out.println(taskId);
-        System.out.println(due);
-
         Task task = TasksUtil.tasksTask(access_token, tasklist, taskId);
         if (due == null || due.equals("")) {
             task.setDue(null);

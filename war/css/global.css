@@ -6,15 +6,53 @@ body {
 }
 
 #main {
+  width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #tasklists {
   float: left;
   width: 200px;
+  border: 1px solid #8080ff;
+}
+
+#tasklistsHeader {
+  padding: 5px;
+  background-color: #f3f3f3;
+  border-style: solid;
+  border-color: #8080ff;
+  border-top-width: 0px;
+  border-left-width: 0px;
+  border-right-width: 0px;
+  border-bottom-width: 1px;
 }
 
 #tasks {
   float: left;
+  width: 390px;
+  border-style: solid;
+  border-color: #8080ff;
+  border-top-width: 1px;
+  border-left-width: 0px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+}
+
+#tasksHeader {
+  padding: 5px;
+  background-color: #f3f3f3;
+  border-style: solid;
+  border-color: #8080ff;
+  border-top-width: 0px;
+  border-left-width: 0px;
+  border-right-width: 0px;
+  border-bottom-width: 1px;
+}
+
+#tasksMain {
+  padding: 5px;
+  overflow: auto;
 }
 
 .cf:after {
@@ -29,15 +67,16 @@ body {
 
 #tasklists ul {
   margin: 0;
+  padding: 0;
 }
 
 #tasklists ul li {
   border-style: solid;
   border-color: #8080ff;
-  border-top-width: 1px;
-  border-left-width: 1px;
-  border-right-width: 1px;
-  border-bottom-width: 0px;
+  border-top-width: 0px;
+  border-left-width: 0px;
+  border-right-width: 0px;
+  border-bottom-width: 1px;
   padding: 5px;
   margin: 0;
   list-style-type: none;
@@ -62,10 +101,6 @@ body {
 
 .update {
   display: none;
-}
-
-#tasks {
-  border: solid #8080ff 1px;
 }
 
 #tasks ul {
@@ -100,19 +135,6 @@ body {
   padding: 0;
   margin: 0;
   cursor: pointer;
-}
-
-dt {
-}
-
-dd {
-  font-size: 8pt;
-  color: #666666;
-  margin-bottom: 4px;
-  background-color: #e0e0ff;
-  border-radius: 5px;
-  padidng: 8px;
-  width: 20em
 }
 
 input {

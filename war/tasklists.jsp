@@ -10,112 +10,154 @@
  <body>
   <div id="main">
    <div id="tasklists">
-    <c:if test="${not empty taskLists}">
-     <ul>
-      <c:forEach items="${taskLists.items}" var="taskList">
-       <li>${f:h(taskList.title)}<input type="hidden" name="tasklist" value="${f:h(taskList.id)}"></li>
-      </c:forEach>
-     </ul>
-    </c:if>
-    <c:if test="${not empty taskLists}">
-     <ul>
-      <c:forEach items="${taskLists.items}" var="taskList">
-       <li><a href="tasks?access_token=${f:h(access_token)}&id=${f:h(taskList.id)}">${f:h(taskList.title)}</a></li>
-      </c:forEach>
-     </ul>
-    </c:if>
+    <div id="tasklistsHeader">タスクリスト</div>
+    <div id="tasklistsMain">
+     <c:if test="${not empty taskLists}">
+      <ul>
+       <c:forEach items="${taskLists.items}" var="taskList">
+        <li>${f:h(taskList.title)}<input type="hidden" name="tasklist" value="${f:h(taskList.id)}"></li>
+       </c:forEach>
+      </ul>
+     </c:if>
+    </div>
    </div>
    <div id="tasks">
-    ←タスクリストを選択して下さい。
+    <div id="tasksHeader">タスク</div>
+    <div id="tasksMain"></div>
    </div>
   </div>
   <jsp:include page="script.jsp" flush="true" />
   <script type="text/javascript">
 (function() {
-	var tasklists = $('#tasklists ul li');
-	tasklists.click(function() {
-		var tasklist = $('[name="tasklist"]', $(this)).val(),
-			tasks = $('#tasks');
-		$.ajax({
-			type: 'GET',
-			url: 'tasks',
-			data: {
-				access_token: '${f:h(access_token)}',
-				tasklist: tasklist
-			},
-			dataType: 'json',
-			cache: false,
-			success: function(data) {
-				var edit = $('.edit');
-				if (edit) {
-					edit.unbind('click');
+	var height = $(window).height();
+	$('#tasklistsMain').height((height - 50) + 'px');
+	$('#tasksMain').height((height - 60) + 'px');
+	
+	TasklistsModel = (function() {
+		var Constr = function(tasklists) {
+			$(tasklists).bind('click', this.onClickTasklists);
+		};
+	
+		Constr.prototype = {
+			onClickTasklists: function() {
+				var tasklist = $(this).find('[name="tasklist"]').val();
+				$.ajax({
+					type: 'GET',
+					url: 'tasks',
+					data: {
+						access_token: '${f:h(access_token)}',
+						tasklist: $(this).find('[name="tasklist"]').val()
+					},
+					dataType: 'json',
+					cache: false,
+					success: function(data) {
+						// 編集領域を設定し、編集ボタンを付ける
+						var tasksModel = new TasksModel('#tasksMain', data.result, tasklist);
+					}
+				});
+			}
+		};
+		
+		return Constr;
+	}());
+
+	TasksModel = (function() {
+		var Constr = function(tasksSelector, html, tasklist) {
+			var me = this,
+				tasks = $(tasksSelector),
+				edit;
+			
+			tasks.html(html);
+			this.tasklist = tasklist;
+
+			tasks.find('.option').append('<img src="image/edit.png" class="edit">');
+			edit = tasks.find('.edit');
+
+			if (edit) {
+				edit.unbind('click');
+			}
+			edit.bind('click', {me: this}, this.onClickEdit);
+		};
+	
+		Constr.prototype = {
+			tasklist: null,
+			onClickEdit: function(event) {
+				var save, cancel,
+					editButton = $(this),
+					optionArea = editButton.parent(),
+					due = optionArea.find('.due'),
+					me = event.data.me;
+				// 表示済みであれば、再度処理しない
+				if (due.css('display') == 'none') {su
+					return;
 				}
-				tasks.html(data.result);
-				$('.option').append('<img src="image/edit.png" class="edit">');
-				edit = $('.edit');
-				edit.bind('click', function() {
-					var o = $(this),
-						parent = o.parent(),
-						due = parent.find('.due');
-					o.hide();
-					due.hide();
-					parent.append('<input type="text" class="dueDate" size="10" value="' + due.text() +'">' +
-						'<input type="button" class="save" value="保存">' +
-						'<input type="button" class="cancel" value="キャンセル">');
-					parent.find('.dueDate').datepicker({
-						dateFormat: 'yy/mm/dd',
-						showOn: 'button',
-						buttonImage: 'image/calendar.png',
-						buttonImageOnly: true
-					});
-					parent.find('.cancel').bind('click', function() {
-						var elem = parent.find('input');
-						elem.unbind('click');
-						parent.find('.dueDate').remove();
-						parent.find('.save').remove();
-						parent.find('.cancel').remove();
-						parent.find('.ui-datepicker-trigger').remove();
-						o.show();
-						due.show();
-					});
-					parent.find('.save').bind('click', function() {
-						var elem = parent.find('input');
-						var dueDate = parent.find('.dueDate').val();
-						elem.unbind('click');
-						parent.find('.dueDate').remove();
-						parent.find('.save').remove();
-						parent.find('.cancel').remove();
-						parent.find('.ui-datepicker-trigger').remove();
-						o.show();
-						due.show();
-						$.ajax({
-							type: 'GET',
-							url: 'update',
-							data: {
-								access_token: '${f:h(access_token)}',
-								tasklist: tasklist,
-								task: parent.find('.task').val(),
-								due: dueDate
-							},
-							dataType: 'json',
-							cache: false,
-							success: function(data) {
-								if (data.result == 'ok') {
-									console.log(dueDate);
-									due.text(dueDate);
-								} else {
-									alert('日付が正しくありません');
-								}
-							}
-						});
-					});
+				due.hide();
+				optionArea.append('<input type="text" class="dueDate" size="10" value="' + due.text() +'">' +
+					'<input type="button" class="save" value="保存">' +
+					'<input type="button" class="cancel" value="キャンセル">');
+				optionArea.find('.dueDate').datepicker({
+					dateFormat: 'yy/mm/dd',
+					showOn: 'button',
+					buttonImage: 'image/calendar.png',
+					buttonImageOnly: true	
+				});
+				
+				save = optionArea.find('.save');
+				cancel = optionArea.find('.cancel');
+				save.bind('click', {me: me}, me.onClickSave);
+				cancel.bind('click', me.onClickCancel);
+			},
+			onClickSave: function(event) {
+				var saveButton = $(this);
+				var optionArea = saveButton.parent();
+				var elem = optionArea.find('input');
+				var dueDate = optionArea.find('.dueDate').val();
+				var due = optionArea.find('.due');
+				elem.unbind('click');
+				optionArea.find('.dueDate').remove();
+				optionArea.find('.save').remove();
+				optionArea.find('.cancel').remove();
+				optionArea.find('.ui-datepicker-trigger').remove();
+				optionArea.show();
+				due.show();
+				$.ajax({
+					type: 'PUT',
+					url: 'update',
+					data: {
+						access_token: '${f:h(access_token)}',
+						tasklist: event.data.me.tasklist,
+						task: optionArea.find('.task').val(),
+						due: dueDate
+					},
+					dataType: 'json',
+					cache: false,
+					success: function(data) {
+						if (data.result == 'ok') {
+							due.text(dueDate);
+						} else {
+							alert('日付が正しくありません');
+						}
+					}
 				});
 			},
-			error: function(XMLHttpRequest, textStatus, errorThrown) {
-				console.log(textStatus);
+			onClickCancel: function() {
+				var editButton = $(this),
+					optionArea = editButton.parent(),
+					due = optionArea.find('.due');
+				optionArea.find('input').unbind('click');
+				optionArea.find('.dueDate').remove();
+				optionArea.find('.save').remove();
+				optionArea.find('.cancel').remove();
+				optionArea.find('.ui-datepicker-trigger').remove();
+				optionArea.show();
+				due.show();
 			}
-		});
-	});
+		};
+		
+		return Constr;
+	}());
+
+	var tasklistsModesl = new TasklistsModel('#tasklists ul li');
 }());
   </script>
  </body>
