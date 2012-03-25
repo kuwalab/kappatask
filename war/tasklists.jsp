@@ -27,7 +27,7 @@
    </div>
   </div>
   <jsp:include page="script.jsp" flush="true" />
-  <script type="text/javascript">
+  <script type="text/javascript" charset="utf-8">
 (function() {
 	var height = $(window).height();
 	$('#tasklistsMain').height((height - 50) + 'px');

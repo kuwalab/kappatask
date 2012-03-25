@@ -24,7 +24,7 @@ public class InputStreamUtil {
         StringBuilder sb = new StringBuilder();
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(is));
+            reader = new BufferedReader(new InputStreamReader(is, "utf-8"));
             String line = null;
             while ((line = reader.readLine()) != null) {
                 sb.append(line).append("\r\n");
