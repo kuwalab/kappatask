@@ -211,11 +211,14 @@ public class TasksUtil {
             (HttpURLConnection) new URL(request).openConnection();
         c.setRequestMethod("PUT");
         c.setRequestProperty("Authorization", "OAuth " + accessToken);
-        c.setRequestProperty("Content-Type", "application/json");
+        c.setRequestProperty("Content-Type", "application/json; charset=utf-8");
         String json = JSON.encode(task);
         c.setDoOutput(true);
-        c.setRequestProperty("Content-Length", String.valueOf(json.length()));
-        c.getOutputStream().write(json.getBytes());
+        byte[] sendString = json.getBytes(ENCODE_UTF8);
+        c.setRequestProperty(
+            "Content-Length",
+            String.valueOf(sendString.length));
+        c.getOutputStream().write(sendString);
         c.getOutputStream().flush();
 
         c.getInputStream();
